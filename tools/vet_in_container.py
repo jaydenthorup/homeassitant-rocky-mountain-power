@@ -4,10 +4,10 @@ Run with:  docker cp <this> homeassistant:/config/vet_rmp.py
            docker exec homeassistant python3 /config/vet_rmp.py
 
 Uses HA's own interpreter and classes, so it catches wrong import paths, wrong
-base-class contracts and API drift — the failures you would otherwise only see
-after a restart. It deliberately does NOT restart or reload Home Assistant.
+base-class contracts and API drift, which are the failures you would otherwise
+only see after a restart. It does not restart or reload Home Assistant.
 
-One deliberate scope limit: `homeassistant.helpers.aiohttp_client.async_get_clientsession`
+One scope limit worth stating: `homeassistant.helpers.aiohttp_client.async_get_clientsession`
 is swapped for a plain aiohttp session, because it requires the `network`
 integration (always loaded in a live instance, absent in a bare HomeAssistant).
 Everything belonging to this integration is exercised against the live endpoint.

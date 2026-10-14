@@ -1,7 +1,7 @@
 """Pure parsing/distance helpers for the RMP/PacifiCorp outage feed.
 
-Deliberately stdlib-only and Home Assistant free, so the feed handling can be
-unit-tested against the live endpoint without a running HA instance.
+No Home Assistant imports in here, so the feed handling can be tested against the
+live endpoint without a running instance.
 """
 from __future__ import annotations
 
