@@ -202,11 +202,18 @@ try:
         check(len(alert) <= len(mapview), "alert radius is a subset of the map view",
               f"{len(alert)} <= {len(mapview)}")
 
+        # NOTE: HA's metaclass rewrites `_attr_*` class attributes into properties, so
+        # they must be read on an *instance*, not on the class (the class attribute is
+        # a descriptor). This bit me once already.
         from custom_components.rmp_outages.binary_sensor import RmpOutageNearHome
-        check(RmpOutageNearHome._attr_device_class == "problem",
-              "near-home sensor is device_class problem", str(RmpOutageNearHome._attr_device_class))
-        check(RmpOutageNearHome._attr_translation_key == "outage_near_home",
-              "near-home sensor has a translation key")
+
+        probe = RmpOutageNearHome.__new__(RmpOutageNearHome)
+        check(getattr(probe, "device_class", None) == "problem",
+              "near-home sensor is device_class problem", str(getattr(probe, "device_class", None)))
+        check(getattr(probe, "translation_key", None) == "outage_near_home",
+              "near-home sensor has a translation key", str(getattr(probe, "translation_key", None)))
+        check(getattr(probe, "icon", None) == "mdi:home-alert",
+              "near-home sensor icon", str(getattr(probe, "icon", None)))
 
         near = within_radius(data.outages, ref, 80, include_planned=False)
         if near:
