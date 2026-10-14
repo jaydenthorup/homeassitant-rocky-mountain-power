@@ -25,6 +25,11 @@ that ZIP's rollup as well.
 Planned maintenance is excluded by default. You can turn it on, but scheduled work
 shouldn't read like an emergency.
 
+There is also an optional **alert radius**, separate from the map radius, which backs a
+`binary_sensor.*_outage_near_home` entity (`device_class: problem`, unplanned outages only).
+A map can usefully show outages 80 km away; an alert about them is just noise, so the two
+radii are deliberately independent. Set the alert radius to `0` to switch it off.
+
 ## Where the numbers come from
 
 The outage map at `rockymountainpower.net/outages-safety.html` is fed by two plain

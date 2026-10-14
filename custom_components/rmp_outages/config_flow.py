@@ -9,10 +9,13 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
+    ALERT_RADIUS_MAX,
+    CONF_ALERT_RADIUS,
     CONF_INCLUDE_PLANNED,
     CONF_RADIUS,
     CONF_STATE,
     CONF_ZIP,
+    DEFAULT_ALERT_RADIUS,
     DEFAULT_INCLUDE_PLANNED,
     DEFAULT_RADIUS,
     DEFAULT_STATE,
@@ -36,6 +39,10 @@ def _schema(current: dict[str, Any]) -> vol.Schema:
                 CONF_INCLUDE_PLANNED,
                 default=current.get(CONF_INCLUDE_PLANNED, DEFAULT_INCLUDE_PLANNED),
             ): bool,
+            vol.Optional(
+                CONF_ALERT_RADIUS,
+                default=current.get(CONF_ALERT_RADIUS, DEFAULT_ALERT_RADIUS),
+            ): vol.All(vol.Coerce(float), vol.Range(min=0, max=ALERT_RADIUS_MAX)),
             vol.Optional(CONF_ZIP, default=current.get(CONF_ZIP, "")): str,
         }
     )

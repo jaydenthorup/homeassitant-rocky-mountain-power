@@ -11,11 +11,13 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
+    CONF_ALERT_RADIUS,
     CONF_INCLUDE_PLANNED,
     CONF_RADIUS,
     CONF_SCAN_INTERVAL,
     CONF_STATE,
     CONF_ZIP,
+    DEFAULT_ALERT_RADIUS,
     DEFAULT_INCLUDE_PLANNED,
     DEFAULT_RADIUS,
     DEFAULT_SCAN_INTERVAL,
@@ -56,6 +58,10 @@ class RmpOutagesCoordinator(DataUpdateCoordinator[RmpData]):
         self.zip_code: str = str(options.get(CONF_ZIP, entry.data.get(CONF_ZIP, "")) or "")
         self.include_planned: bool = bool(
             options.get(CONF_INCLUDE_PLANNED, entry.data.get(CONF_INCLUDE_PLANNED, DEFAULT_INCLUDE_PLANNED))
+        )
+        # Alerting radius is separate from the map radius on purpose.
+        self.alert_radius: float = float(
+            options.get(CONF_ALERT_RADIUS, entry.data.get(CONF_ALERT_RADIUS, DEFAULT_ALERT_RADIUS)) or 0
         )
         interval = options.get(CONF_SCAN_INTERVAL, entry.data.get(CONF_SCAN_INTERVAL))
         super().__init__(

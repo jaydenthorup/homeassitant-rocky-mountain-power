@@ -63,7 +63,8 @@ def make_entry(coordinator_cls, hass, state, radius):
 
 
 step("1. import every module with HA's interpreter")
-for mod in ("const", "parser", "coordinator", "geo_location", "sensor", "config_flow", "__init__"):
+for mod in ("const", "parser", "coordinator", "geo_location", "sensor", "binary_sensor",
+            "config_flow", "__init__"):
     try:
         importlib.import_module(f"{DOMAIN}.{mod}")
         check(True, f"import {mod}")
@@ -78,7 +79,7 @@ try:
 
     schema = _schema({})
     keys = sorted(str(k) for k in schema.schema)
-    check(keys == ["include_planned", "radius", "state", "zip"], "schema keys", str(keys))
+    check(keys == ["alert_radius", "include_planned", "radius", "state", "zip"], "schema keys", str(keys))
     parsed = schema({"state": "UT"})
     check(parsed["state"] == "UT" and parsed["radius"] == DEFAULT_RADIUS,
           "defaults fill in", json.dumps(parsed, default=str))
@@ -194,6 +195,19 @@ try:
               "radius 0 returns nothing")
         distances = [d for d, _ in unplanned_rows]
         check(distances == sorted(distances), "results come back nearest first")
+        alert = within_radius(data.outages, ref, 10, include_planned=False)
+        mapview = within_radius(data.outages, ref, 80, include_planned=True)
+        check(all(not o.is_planned for _, o in alert), "alert set excludes planned work",
+              f"{len(alert)} within 10 km")
+        check(len(alert) <= len(mapview), "alert radius is a subset of the map view",
+              f"{len(alert)} <= {len(mapview)}")
+
+        from custom_components.rmp_outages.binary_sensor import RmpOutageNearHome
+        check(RmpOutageNearHome._attr_device_class == "problem",
+              "near-home sensor is device_class problem", str(RmpOutageNearHome._attr_device_class))
+        check(RmpOutageNearHome._attr_translation_key == "outage_near_home",
+              "near-home sensor has a translation key")
+
         near = within_radius(data.outages, ref, 80, include_planned=False)
         if near:
             print(f"       nearest to the reference point: {near[0][0]:.1f} km, zip "

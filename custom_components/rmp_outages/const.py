@@ -24,6 +24,7 @@ CONF_STATE = "state"
 CONF_RADIUS = "radius"
 CONF_INCLUDE_PLANNED = "include_planned"
 CONF_ZIP = "zip"
+CONF_ALERT_RADIUS = "alert_radius"
 CONF_SCAN_INTERVAL = "scan_interval"
 
 DEFAULT_STATE = "UT"
@@ -31,6 +32,9 @@ DEFAULT_RADIUS = 80  # km
 RADIUS_MIN = 1
 RADIUS_MAX = 2000
 DEFAULT_INCLUDE_PLANNED = False
+# Near-home alert radius, independent of the map radius. 0 disables the sensor.
+DEFAULT_ALERT_RADIUS = 10
+ALERT_RADIUS_MAX = 200
 
 ATTR_OUTAGE_ID = "outage_id"
 ATTR_ZIP = "zip"
@@ -43,4 +47,4 @@ ATTR_REPORTED = "reported"
 ATTR_KIND = "kind"
 ATTR_PLANNED = "planned"
 
-PLATFORMS = ["sensor", "geo_location"]
+PLATFORMS = ["sensor", "binary_sensor", "geo_location"]

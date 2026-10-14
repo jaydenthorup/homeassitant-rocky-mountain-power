@@ -8,7 +8,8 @@
           "state": "State (PacifiCorp footprint)",
           "radius": "Radius to track (km)",
           "include_planned": "Also show planned maintenance",
-          "zip": "Home ZIP code (optional; adds a ZIP sensor)"
+          "zip": "Home ZIP code (optional; adds a ZIP sensor)",
+          "alert_radius": "Alert radius (km, 0 disables the near-home sensor)"
         }
       }
     },
@@ -24,19 +25,37 @@
           "state": "State (PacifiCorp footprint)",
           "radius": "Radius to track (km)",
           "include_planned": "Also show planned maintenance",
-          "zip": "Home ZIP code (optional; adds a ZIP sensor)"
+          "zip": "Home ZIP code (optional; adds a ZIP sensor)",
+          "alert_radius": "Alert radius (km, 0 disables the near-home sensor)"
         }
       }
     }
   },
   "entity": {
     "sensor": {
-      "statewide_customers_out": { "name": "Statewide customers out" },
-      "outage_records": { "name": "Outage records" },
-      "outages_within_radius": { "name": "Outages within radius" },
-      "feed_age": { "name": "Feed age" },
-      "feed_last_update": { "name": "Feed last update" },
-      "home_zip_customers_out": { "name": "Home ZIP customers out" }
+      "statewide_customers_out": {
+        "name": "Statewide customers out"
+      },
+      "outage_records": {
+        "name": "Outage records"
+      },
+      "outages_within_radius": {
+        "name": "Outages within radius"
+      },
+      "feed_age": {
+        "name": "Feed age"
+      },
+      "feed_last_update": {
+        "name": "Feed last update"
+      },
+      "home_zip_customers_out": {
+        "name": "Home ZIP customers out"
+      }
+    },
+    "binary_sensor": {
+      "outage_near_home": {
+        "name": "Outage near home"
+      }
     }
   }
 }
