@@ -204,6 +204,15 @@ try:
         # NOTE: HA's metaclass rewrites `_attr_*` class attributes into properties, so
         # they must be read on an *instance*, not on the class (the class attribute is
         # a descriptor). This bit me once already.
+        from custom_components.rmp_outages.parser import home_outage
+
+        match = home_outage(data.outages, ref, REFERENCE_ZIP, 10)
+        check(match is None or match[0] in ("zip", "nearest"),
+              "home_outage names the outage most likely to be yours",
+              f"{match[0]} at {match[1]:.1f} km, ETR {match[2].etr!r}" if match else "nothing nearby")
+        check(home_outage(data.outages, ref, "", 0) is None,
+              "home_outage returns nothing (not an exception) when nothing is near")
+
         from custom_components.rmp_outages.binary_sensor import RmpOutageNearHome
 
         probe = RmpOutageNearHome.__new__(RmpOutageNearHome)
@@ -213,6 +222,14 @@ try:
               "near-home sensor has a translation key", str(getattr(probe, "translation_key", None)))
         check(getattr(probe, "icon", None) == "mdi:home-alert",
               "near-home sensor icon", str(getattr(probe, "icon", None)))
+
+        from custom_components.rmp_outages.sensor import RmpEstimatedRestoration
+
+        etr = RmpEstimatedRestoration.__new__(RmpEstimatedRestoration)
+        check(getattr(etr, "translation_key", None) == "estimated_restoration",
+              "restoration sensor has a translation key", str(getattr(etr, "translation_key", None)))
+        check(getattr(etr, "icon", None) == "mdi:timer-sand-complete",
+              "restoration sensor icon", str(getattr(etr, "icon", None)))
 
         near = within_radius(data.outages, ref, 80, include_planned=False)
         if near:

@@ -109,6 +109,30 @@ def within_radius(
     return rows
 
 
+def home_outage(
+    outages: list[Outage],
+    home: tuple[float, float],
+    zip_code: str = "",
+    radius_km: float = 10.0,
+) -> tuple[str, float, Outage] | None:
+    """Return the outage most likely to be the one affecting this house.
+
+    An exact ZIP match wins, since that is definitionally yours; otherwise the
+    nearest unplanned outage inside radius_km, with the distance kept so the
+    caller can say how approximate that is. Returns (reason, distance_km, outage).
+    """
+    unplanned = [o for o in outages if not o.is_planned]
+    if zip_code:
+        for outage in unplanned:
+            if outage.zip == str(zip_code):
+                return "zip", haversine_km(home, (outage.latitude, outage.longitude)), outage
+    rows = within_radius(unplanned, home, radius_km, include_planned=False)
+    if rows:
+        distance, outage = rows[0]
+        return "nearest", distance, outage
+    return None
+
+
 def parse_last_upd(value: str | None, tz: tzinfo | None = None) -> datetime | None:
     """Parse the feed's own timestamp, e.g. 'Tuesday, October 13 09:45 PM, 2026'.
 

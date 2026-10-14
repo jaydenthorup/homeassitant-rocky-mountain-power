@@ -23,7 +23,7 @@ from .const import (
     DOMAIN,
 )
 from .coordinator import RmpOutagesCoordinator
-from .parser import parse_last_upd, within_radius
+from .parser import home_outage, parse_last_upd, within_radius
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ async def async_setup_entry(
     """Set up the feed sensors."""
     coordinator: RmpOutagesCoordinator = entry.runtime_data
     entities: list[SensorEntity] = [
+        RmpEstimatedRestoration(coordinator, entry),
         RmpStatewideCustomersOut(coordinator, entry),
         RmpOutageRecords(coordinator, entry),
         RmpOutagesWithinRadius(coordinator, entry),
@@ -234,6 +235,52 @@ class RmpFeedLastUpdate(RmpBaseSensor):
         if data is None:
             return None
         return parse_last_upd(data.feed_last_upd, _origin_time_zone(self.hass))
+
+
+class RmpEstimatedRestoration(RmpBaseSensor):
+    """When the utility expects to have your power back."""
+
+    _attr_icon = "mdi:timer-sand-complete"
+
+    def __init__(self, coordinator, entry):
+        """Initialise."""
+        super().__init__(coordinator, entry, "estimated_restoration")
+
+    def _match(self):
+        """Return (reason, distance, outage) for the outage most likely to be yours."""
+        data = self.coordinator.data
+        if data is None:
+            return None
+        return home_outage(
+            data.outages,
+            (self.hass.config.latitude, self.hass.config.longitude),
+            self.coordinator.zip_code,
+            self.coordinator.alert_radius or 10,
+        )
+
+    @property
+    def native_value(self) -> str:
+        """The utility's own wording, or a plain statement that there is nothing nearby."""
+        match = self._match()
+        if match is None:
+            return "No outage nearby"
+        return match[2].etr or "not stated"
+
+    @property
+    def extra_state_attributes(self) -> dict:
+        """Everything needed to judge how much that estimate really applies to you."""
+        match = self._match()
+        if match is None:
+            return {}
+        reason, distance, outage = match
+        return {
+            "matched": "your ZIP" if reason == "zip" else "outage nearest home",
+            "distance_km": round(distance, 1),
+            ATTR_ZIP: outage.zip,
+            ATTR_CUSTOMERS_OUT: outage.customers_out,
+            ATTR_CREW_STATUS: outage.crew_status,
+            ATTR_REPORTED: outage.reported,
+        }
 
 
 class RmpHomeZipCustomersOut(RmpBaseSensor):

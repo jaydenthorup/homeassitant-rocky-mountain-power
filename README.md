@@ -22,6 +22,12 @@ counts, how many outages are inside your radius and where the nearest one is, ho
 old the feed is, and the timestamp from the origin. Give it a ZIP code and it adds
 that ZIP's rollup as well.
 
+The one that answers "how long is this going to take" is **Estimated restoration**:
+the utility's own ETR for the outage most likely to be yours (an exact ZIP match
+first, otherwise the nearest one inside the alert radius), with the matched ZIP,
+distance and crew status as attributes so you can judge how much it really applies
+to you. It reads `No outage nearby` when there is nothing close enough to claim.
+
 Planned maintenance is excluded by default. You can turn it on, but scheduled work
 shouldn't read like an emergency.
 

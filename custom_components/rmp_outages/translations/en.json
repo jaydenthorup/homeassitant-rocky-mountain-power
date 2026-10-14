@@ -50,6 +50,9 @@
       },
       "home_zip_customers_out": {
         "name": "Home ZIP customers out"
+      },
+      "estimated_restoration": {
+        "name": "Estimated restoration"
       }
     },
     "binary_sensor": {
