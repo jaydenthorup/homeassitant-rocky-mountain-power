@@ -105,9 +105,9 @@ class RmpOutageEvent(GeolocationEvent):
 
     _attr_attribution = ATTRIBUTION
     _attr_icon = "mdi:transmission-tower-off"
-    # Overridden per outage in __init__ so markers are distinguishable on the map
-    # and match the "RMP Outage" wording already used on the dashboard.
-    _attr_name = "RMP Outage"
+    # Plain language on purpose: "RMP" is insider shorthand that means nothing to
+    # someone glancing at the map. Set per outage in __init__ for planned work.
+    _attr_name = "Power Outage"
     _attr_should_poll = False
     _attr_source = DOMAIN
     # These carry lat/lon plus volatile feed text; nothing here needs recording.
@@ -116,8 +116,7 @@ class RmpOutageEvent(GeolocationEvent):
     def __init__(self, outage: Outage, distance: float, unit: str) -> None:
         """Initialise the marker from one outage record."""
         self._outage = outage
-        label = "RMP Planned Outage" if outage.is_planned else "RMP Outage"
-        self._attr_name = f"{label} {outage.zip}".strip() if outage.zip else label
+        self._attr_name = "Planned Power Outage" if outage.is_planned else "Power Outage"
         if outage.is_planned:
             self._attr_icon = "mdi:calendar-clock"
         self._attr_unique_id = f"{DOMAIN}_{outage.key}"
@@ -146,8 +145,7 @@ class RmpOutageEvent(GeolocationEvent):
     def update_from(self, outage: Outage, distance: float) -> None:
         """Apply fresh data for the same outage."""
         self._outage = outage
-        label = "RMP Planned Outage" if outage.is_planned else "RMP Outage"
-        self._attr_name = f"{label} {outage.zip}".strip() if outage.zip else label
+        self._attr_name = "Planned Power Outage" if outage.is_planned else "Power Outage"
         self._attr_icon = "mdi:calendar-clock" if outage.is_planned else "mdi:transmission-tower-off"
         self._attr_distance = round(distance, 1)
         self._refresh_attributes()
