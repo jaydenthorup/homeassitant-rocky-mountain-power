@@ -1,0 +1,42 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rocky Mountain Power Outages",
+        "description": "Polls the outage map published by Rocky Mountain Power / Pacific Power (PacifiCorp) and creates a map marker for each outage near your home.",
+        "data": {
+          "state": "State (PacifiCorp footprint)",
+          "radius": "Radius to track (km)",
+          "include_planned": "Also show planned maintenance",
+          "zip": "Home ZIP code (optional; adds a ZIP sensor)"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "That state and radius are already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rocky Mountain Power Outages",
+        "data": {
+          "state": "State (PacifiCorp footprint)",
+          "radius": "Radius to track (km)",
+          "include_planned": "Also show planned maintenance",
+          "zip": "Home ZIP code (optional; adds a ZIP sensor)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "statewide_customers_out": { "name": "Statewide customers out" },
+      "outage_records": { "name": "Outage records" },
+      "outages_within_radius": { "name": "Outages within radius" },
+      "feed_age": { "name": "Feed age" },
+      "feed_last_update": { "name": "Feed last update" },
+      "home_zip_customers_out": { "name": "Home ZIP customers out" }
+    }
+  }
+}
