@@ -12,6 +12,9 @@ enter the feed and vanish when they clear.
 
 ## What you get
 
+Markers are labelled `Power Outage <zip>` (planned work: `Planned Power Outage <zip>`), so
+one is distinguishable from the next on the map.
+
 Each outage inside your configured radius becomes a `geo_location` entity whose
 state is the distance from home, in km or miles depending on your unit system.
 The attributes carry the rest of what the feed knows: `zip`, `customers_out`,

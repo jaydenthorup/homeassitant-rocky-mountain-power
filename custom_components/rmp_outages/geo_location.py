@@ -116,7 +116,7 @@ class RmpOutageEvent(GeolocationEvent):
     def __init__(self, outage: Outage, distance: float, unit: str) -> None:
         """Initialise the marker from one outage record."""
         self._outage = outage
-        self._attr_name = "Planned Power Outage" if outage.is_planned else "Power Outage"
+        self._attr_name = self._label(outage)
         if outage.is_planned:
             self._attr_icon = "mdi:calendar-clock"
         self._attr_unique_id = f"{DOMAIN}_{outage.key}"
@@ -126,6 +126,16 @@ class RmpOutageEvent(GeolocationEvent):
         self._attr_latitude = outage.latitude
         self._attr_longitude = outage.longitude
         self._refresh_attributes()
+
+    @staticmethod
+    def _label(outage: Outage) -> str:
+        """Plain wording plus the ZIP: 'Power Outage 84098'.
+
+        The ZIP is what makes one marker telling apart from the next; the utility's
+        acronym is not, which is why the wording stays plain and the ZIP stays on.
+        """
+        words = "Planned Power Outage" if outage.is_planned else "Power Outage"
+        return f"{words} {outage.zip}".strip() if outage.zip else words
 
     def _refresh_attributes(self) -> None:
         """Rebuild the attribute payload from the outage record."""
@@ -145,7 +155,7 @@ class RmpOutageEvent(GeolocationEvent):
     def update_from(self, outage: Outage, distance: float) -> None:
         """Apply fresh data for the same outage."""
         self._outage = outage
-        self._attr_name = "Planned Power Outage" if outage.is_planned else "Power Outage"
+        self._attr_name = self._label(outage)
         self._attr_icon = "mdi:calendar-clock" if outage.is_planned else "mdi:transmission-tower-off"
         self._attr_distance = round(distance, 1)
         self._refresh_attributes()

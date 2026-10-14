@@ -129,10 +129,10 @@ try:
           "same outage refreshes in place")
 
     # Labels must be distinguishable on the map and read the same way as the dashboard.
-    check(entity.name == "Power Outage", "unplanned marker label", entity.name)
+    check(entity.name == f"Power Outage {REFERENCE_ZIP}", "unplanned marker label", entity.name)
     check(entity.icon == "mdi:transmission-tower-off", "unplanned marker icon", entity.icon)
     planned = RmpOutageEvent(dataclasses.replace(outage, key="planned01", kind="planned"), 5.0, "km")
-    check(planned.name == "Planned Power Outage", "planned marker label", planned.name)
+    check(planned.name == f"Planned Power Outage {REFERENCE_ZIP}", "planned marker label", planned.name)
     check(planned.icon == "mdi:calendar-clock", "planned marker icon", planned.icon)
     check(entity.entity_id != planned.entity_id and entity.unique_id != planned.unique_id,
           "labels differ without colliding ids")
