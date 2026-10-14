@@ -223,9 +223,15 @@ try:
         check(getattr(probe, "icon", None) == "mdi:home-alert",
               "near-home sensor icon", str(getattr(probe, "icon", None)))
 
+        # RmpBaseSensor sets the translation key per *instance* in __init__, so a
+        # __new__ probe cannot see it - construct one with duck-typed collaborators.
+        from types import SimpleNamespace
+
         from custom_components.rmp_outages.sensor import RmpEstimatedRestoration
 
-        etr = RmpEstimatedRestoration.__new__(RmpEstimatedRestoration)
+        etr = RmpEstimatedRestoration(
+            SimpleNamespace(data=None), SimpleNamespace(entry_id="vet")
+        )
         check(getattr(etr, "translation_key", None) == "estimated_restoration",
               "restoration sensor has a translation key", str(getattr(etr, "translation_key", None)))
         check(getattr(etr, "icon", None) == "mdi:timer-sand-complete",
