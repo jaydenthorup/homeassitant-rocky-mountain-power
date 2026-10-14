@@ -18,8 +18,6 @@ LIST_URL = FEED_BASE + "/list{state}.json"
 # The origin serves cache-control: max-age=300 and only refreshes ~every 5 min,
 # so polling faster than this is pointless and impolite.
 DEFAULT_SCAN_INTERVAL = datetime.timedelta(seconds=300)
-UPDATE_INTERVAL_MIN = 300
-UPDATE_INTERVAL_MAX = 3600
 
 STATES = ["UT", "ID", "WY", "CA", "WA", "OR"]
 CONF_STATE = "state"
@@ -34,9 +32,6 @@ RADIUS_MIN = 1
 RADIUS_MAX = 2000
 DEFAULT_INCLUDE_PLANNED = False
 
-KIND_PLANNED = "planned"
-KIND_STANDARD = "standard"
-
 ATTR_OUTAGE_ID = "outage_id"
 ATTR_ZIP = "zip"
 ATTR_CUSTOMERS_OUT = "customers_out"
@@ -47,8 +42,5 @@ ATTR_ETR = "etr"
 ATTR_REPORTED = "reported"
 ATTR_KIND = "kind"
 ATTR_PLANNED = "planned"
-
-SIGNAL_ADD = DOMAIN + "_add_{}"
-SIGNAL_DELETE = DOMAIN + "_delete_{}"
 
 PLATFORMS = ["sensor", "geo_location"]

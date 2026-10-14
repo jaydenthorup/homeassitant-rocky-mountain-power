@@ -10,8 +10,6 @@ import math
 from dataclasses import dataclass
 from datetime import datetime, tzinfo
 
-KM_PER_DEG_LAT = 110.574
-
 
 @dataclass(frozen=True, slots=True)
 class Outage:

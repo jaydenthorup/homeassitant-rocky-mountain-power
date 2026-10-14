@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
 
 import aiohttp
 from homeassistant.config_entries import ConfigEntry
@@ -39,7 +38,6 @@ class RmpData:
     feed_last_upd: str | None = None
     server_record_count: int | None = None
     zip_rollup: dict[str, int] = field(default_factory=dict)
-    last_upd_changed_at: Any = None
 
     @property
     def unplanned(self) -> list[Outage]:
@@ -70,7 +68,6 @@ class RmpOutagesCoordinator(DataUpdateCoordinator[RmpData]):
             config_entry=entry,
             update_interval=DEFAULT_SCAN_INTERVAL if not interval else interval,
         )
-        self._previous_last_upd: str | None = None
 
     async def _async_update_data(self) -> RmpData:
         """Fetch and parse the feeds."""
@@ -97,14 +94,6 @@ class RmpOutagesCoordinator(DataUpdateCoordinator[RmpData]):
         except (TypeError, ValueError):
             data.server_record_count = None
         data.feed_last_upd = payload.get("last_upd")
-
-        if data.feed_last_upd != self._previous_last_upd:
-            # The origin only rewrites last_upd when it actually has new data,
-            # so this is the honest "the feed is alive" clock.
-            data.last_upd_changed_at = self.hass.loop.time()
-            self._previous_last_upd = data.feed_last_upd
-        else:
-            data.last_upd_changed_at = self.data.last_upd_changed_at if self.data else None
 
         if self.zip_code:
             list_url = LIST_URL.format(state=self.state)
